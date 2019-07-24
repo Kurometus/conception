@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Prhases fr | Doctor</title>
+	<link rel="stylesheet" href="components/bootstrap.min.css">
+	<style>
+		h5 {
+		  text-transform: capitalize;
+		}
+	</style>
+</head>
+<body style="background: #FEF7ED;">
+	<div id="app" class="container-fluid">
+
+			<div class="row bg-info text-white mb-4">
+				<div class="col-lg-12 text-center">
+					<h1>PRHASES (FR,ES). DOCTOR</h1>
+				</div>
+			</div>
+
+			<div class="row" id="Prhases">
+
+			</div>
+	</div>
+	
+
+<script type="text/javascript" src="components/bootstrap.min.js"></script>
+<script type="text/javascript" src="components/jquery-3.3.1.min.js"></script>
+<script>
+	$(function() {
+	   var Prhases = $('#Prhases');
+	   var fr = [];
+
+	   $.getJSON('assets/prhases.json', function(data) {
+	       $.each(data.prhases, function(i, f) {
+	           fr.push([f.id, f.prhase_fr, f.prhase_es]);
+	           Prhases.append('<div class="col-sm-12 col-md-6 p-1"><div class="alert alert-info"><h5 class="p-lg-3">' + f.prhase_fr + '</h5></div></div>')
+	           Prhases.append('<div class="col-sm-12 col-md-6 p-1 mb-3 mb-md-0"><div class="alert alert-success"><h5 class="p-lg-3">' + f.prhase_es + '</h5></div></div>')
+	       });
+	   });
+	});
+</script>
+</body>
+</html>
