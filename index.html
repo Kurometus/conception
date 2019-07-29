@@ -3,149 +3,100 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Prhases fr | Doctor</title>
+	<title>PHRASES (FR - EN) | HEALT</title>
 	<link rel="stylesheet" href="components/bootstrap.min.css">
 	<style>
-		h5 {
-		  text-transform: capitalize;
-		}
+		h5 {text-transform: capitalize;}
 	</style>
 </head>
 <body style="background: #FEF7ED;">
 	<div id="app" class="container-fluid">
-
-			<div class="row bg-white">
-				<div class="col-lg-12 text-center">
-					<h1>PRHASES (FR,ES). DOCTOR</h1>
+			<div class="row bg-primary text-white p-2 mb-2">
+				<div class="col-12 text-center text-white">
+					<h3>PHRASES (FR,ES). DOCTOR</h3>
 				</div>
 			</div>
-
-			<!-- <div class="alert alert-danger" v-if="errorMsg">
-				{{ errorMsg }}
+			<div class="row mb-2">
+				<input type="text" placeholder="Search in FRENCH" class="form-control col alert-secondary text-center border border-success" v-model="phrase_fr" v-show="!phrase_es">
 			</div>
-			<div class="alert alert-success" v-if="successMsg">
-				{{ successMsg }}
-			</div> -->
-
-			<!-- <div class="row bg-white">
-				<div class="col-lg-12 text-center mb-4">
-					<form action="#" method="post">
-						<input type="text" name="prhase_fr" placeholder="Write Prhase in francais" v-model="newPrhase.prhase_fr">
-						<input type="text" name="prhase_es" placeholder="Write Prhase in spanish" v-model="newPrhase.prhase_es">
-						<input type="submit" class="btn btn-primary py-0" value="Reply" @click="addPrhase();">
-					</form>
-				</div>
-			</div> -->
-
-			<div class="row mt-4" v-for="prhase in prhases">
-				<div class="col mt-3">
-					<div class="alert alert-success">
-						<h5>
-							{{ prhase.prhase_fr }}
-						</h5>
-					<!-- 	<div class="d-flex">
-							<p class="h5 btn btn-outline-warning p-0 m-1">Edit</p>
-							<p class="h5 btn btn-outline-warning p-0 m-1">delete</p>
-						</div> -->
+			<div class="row mt-2">
+				<input type="text" placeholder="Search in SPANISH" class="form-control col alert-secondary text-center border border-warning" v-model="phrase_es" v-show="!phrase_fr">
+			</div>
+			<template v-if="!phrase_fr">
+				<div class="row mt-4" v-for="phrase in searchPhraseEs">
+					<div class="col mt-3">
+						<div class="alert alert-success">
+							<h5>
+								{{ phrase.phrase_fr }}
+							</h5>
+						</div>
+					</div>
+					<div class="col mt-3">
+						<div class="alert alert-warning">
+							<h5>
+								{{ phrase.phrase_es }}	
+							</h5>
+						</div>
 					</div>
 				</div>
-				<div class="col mt-3">
-					<div class="alert alert-warning">
-						<h5>
-							{{ prhase.prhase_es }}	
-						</h5>
+			</template>
+			<template v-if="phrase_fr">
+				<div class="row mt-4" v-for="phrase in searchPhraseFr">
+					<div class="col mt-3">
+						<div class="alert alert-success">
+							<h5>
+								{{ phrase.phrase_fr }}
+							</h5>
+						</div>
+					</div>
+					<div class="col mt-3">
+						<div class="alert alert-warning">
+							<h5>
+								{{ phrase.phrase_es }}	
+							</h5>
+						</div>
 					</div>
 				</div>
-			</div>
+			</template>
 
-			<!-- <div class="row">
-				<div class="col-12">
-					<table class="table table-bordered table-hover table-Striped  table-responsive-md">
-						<thead>
-							<tr class="text-center bg-danger text-white">
-								<th>Francés</th>
-								<th>Español</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="text-center table-warning" v-for="prhase in prhases">
-								<td class="p-5  h5">{{ prhase.prhase_fr }}</td>
-								<td class="p-5  h5">{{ prhase.prhase_es }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<!-- <div class="col-lg-12">
+				<pre>
+					{{ $data }}
+				</pre>
 			</div> -->
-
+	<div class="col-12 text-center py-4"><a href="https://github.com/Kurometus">Developed By KUROMETUS</a></div>
 	</div>
-	
-
-<script type="text/javascript" src="components/jquery-3.3.1.slim.min.js"></script>
-<script type="text/javascript" src="components/popper.min.js"></script>
-<script type="text/javascript" src="components/bootstrap.min.js"></script>
-<script type="text/javascript" src="components/axios.min.js"></script>
 <script type="text/javascript" src="components/vue.js"></script>
+<script type="text/javascript" src="components/axios.min.js"></script>
 <script>
-	var app = new Vue({
+	new Vue({
 		el: '#app',
-		data: {
-			errorMsg: "",
-			successMsg: "",
-			prhases: [],
-			newPrhase: {prhase_fr: "",prhase_es: ""},
-			currentPrhase: {}
+		created: function() {
+			this.getPhrases()
 		},
-		mounted: function(){
-			this.getAllPrhases();
+		data: {
+			lists: [],
+			phrase_fr: '',
+			phrase_es: ''
 		},
 		methods: {
-			getAllPrhases(){
-				axios.get('process.php?action=read').then(function(response){
-					if(response.data.error){
-						app.errorMsg = response.data.message;
-					}else{
-						app.prhases = response.data.prhases;
-					}
+			getPhrases: function() {
+				axios.get('asset/phrases.json').then(response => {
+					this.lists = response.data.phrases
 				});
-			},
-			addPrhase(){
-				var formData = app.toFormData(app.newPrhase);
-				axios.post('process.php?action=create',formData).then(function(response){
-					app.newPrhase = {prhase_fr: "",prhase_es: ""};
-					if(response.data.error){
-						app.errorMsg = response.data.message;
-					}else{
-						app.successMsg = response.data.message;
-						app.getAllPrhases();
-					}
-				});
-			},
-			updatePrhase(){
-				var formData = app.toFormData(app.currentPrhase);
-				axios.post('process.php?action=update',formData).then(function(response){
-					app.currentPrhase = {};
-					if(response.data.error){
-						app.errorMsg = response.data.message;
-					}else{
-						app.successMsg = response.data.message;
-						app.getAllPrhases();
-					}
-				});
-			},
-			toFormData(obj){
-				var fd = new FormData();
-				for(var i in obj){
-					fd.append(i,obj[i]);
-				}
-				return fd;
-			},
-			selectPrhase(prhase){
-				app.currentPrhase = prhase;
 			}
+		},
+		computed: {
+			searchPhraseEs() {
+	            var searchLower = this.phrase_es.toLowerCase();
+	            return this.lists.filter((phrase) => phrase.phrase_es.toLowerCase().includes(searchLower));
+	        },
+	        searchPhraseFr() {
+	            var searchLowerFr = this.phrase_fr.toLowerCase();
+	            return this.lists.filter((phrase) => phrase.phrase_fr.toLowerCase().includes(searchLowerFr));
+	        }
 		}
 	});
 </script>
-
-<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>
